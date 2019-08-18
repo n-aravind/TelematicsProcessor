@@ -50,6 +50,9 @@ public class Consumer extends Thread {
                 if (watchKey != null) {
                     watchKey.pollEvents().forEach(event -> processEvent(event.context()));
                 }
+
+                // TODO CODEREVIEW how about check for null and if not null call reset.
+                // try/catch for NPE is not "normal"
                 try {
                     watchKey.reset();
                 } catch (NullPointerException e) {
@@ -76,13 +79,18 @@ public class Consumer extends Thread {
         }
     }
 
+    // TODO CODEREVIEW  the car list is an instance variable so no need to pass it as a parameter
     private void writeToHtml(List<Car> carList) {
+        // TODO CODEREVIEW try-with-resource
         try {
             fileWriter = new FileWriter(new File("src/main/resources/report.html"));
+            // TODO CODEREVIEW make string static final
             fileWriter.write("<!DOCTYPE html><html><meta http-equiv=\"refresh\" content=\"5\"/><body>");
             fileWriter.write(getHeader(carList));
+            // TODO CODEREVIEW make string static final
             fileWriter.write("<p><b>All Telematic Entries : </b></p>");
             fileWriter.write(getTable(carList));
+            // TODO CODEREVIEW make string static final
             fileWriter.write("</body></html>");
         } catch (IOException e) {
             e.printStackTrace();
@@ -123,7 +131,17 @@ public class Consumer extends Thread {
     }
 
     private String getHeader(List<Car> carList) {
-        return "<h2><table align=\"center\" style=\"width:75%\" border=\"0\"><tr><th>Number Of Telematic Entries</th><th>Average Odometer Reading</th><th>Average Fuel Remaining</th></tr><tr><td align=\"center\">" + carList.size() + "</td><td align=\"center\">" + getFormattedDecimal(getAverageOdometerReading(carList)) + "</td><td align=\"center\">" + getFormattedDecimal(getAverageFuelRemaining(carList)) + "</td></tr></table></h2>";
+        return "<h2><table align=\"center\" style=\"width:75%\" border=\"0\">" +
+                "<tr>" +
+                "<th>Number Of Telematic Entries</th>" +
+                "<th>Average Odometer Reading</th>" +
+                "<th>Average Fuel Remaining</th>" +
+                "</tr>" +
+                "<tr>" +
+                "<td align=\"center\">" + carList.size() + "</td>" +
+                "<td align=\"center\">" + getFormattedDecimal(getAverageOdometerReading(carList)) + "</td>" +
+                "<td align=\"center\">" + getFormattedDecimal(getAverageFuelRemaining(carList)) + "</td>" +
+                "</tr></table></h2>";
     }
 
     private String getFormattedDecimal(double amount) {

@@ -149,4 +149,9 @@ public class Consumer extends Thread {
         DecimalFormat decimalFormat = new DecimalFormat(pattern);
         return decimalFormat.format(amount);
     }
+
+    public static void main(String[] args) {
+        Consumer consumer = new Consumer();
+        consumer.run();
+    }
 }

@@ -45,10 +45,16 @@ public class Producer extends Thread {
         ObjectMapper mapper = new ObjectMapper();
         File file;
         try {
+            // TODO CODEREVIEW do not put generated files under the src tree
             file = File.createTempFile(String.valueOf(System.currentTimeMillis()),".json",new File("src/main/resources/"));
             mapper.writeValue(file,car);
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        Producer producer = new Producer();
+        producer.run();
     }
 }
